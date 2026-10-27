@@ -8,6 +8,7 @@ static BoneFn volatile call_bone;
 static HealthFn volatile call_health;
 static unsigned mock_counts[5];
 static int nested;
+static uint8_t test_bone=1;
 static float post_armor_scale=1;
 static unsigned char other_victim[0x700],other_attack[RAW_SIZE];
 static unsigned char fake_pool[0x10+1024*0x700],fake_slots[3*24];
@@ -28,7 +29,9 @@ __declspec(noinline) static float mock_armor(void *attack,float damage,float arm
  return damage*powf(coefficient,ap-armor);
 }
 __declspec(noinline) static float mock_bone(void *victim,void *attack,uint8_t *bone) {
- (void)victim;mock_counts[3]++;*bone=1;float d;memcpy(&d,attack,4);return d*4;
+ mock_counts[3]++;*bone=test_bone;float d,coefficient;uintptr_t attributes;
+ memcpy(&d,attack,4);memcpy(&attributes,(char *)victim+0x658,sizeof(attributes));
+ memcpy(&coefficient,(void *)(attributes+0x3e0+test_bone*4),4);return d*coefficient;
 }
 __declspec(noinline) static float mock_health(void *modifier,float delta,uint32_t kind,float current) {
  (void)modifier;mock_counts[4]++;return kind==1?fmaxf(0,fminf(1000,current+delta)):current;
@@ -50,6 +53,7 @@ static void fixture(unsigned char *victim,unsigned char *attack,unsigned char *a
  memcpy(victim+0x658,&attr,sizeof(attr));memcpy(victim+0x668,&modifier,sizeof(modifier));
  memcpy(attack,&d,4);memcpy(attack+8,&ap,4);uid=7;memcpy(attack+0x20,&uid,4);attack[0x78]=6;
  memcpy(attributes+0x3e4,&bone,4);
+ bone=12;memcpy(attributes+0x3e0,&bone,4);
 }
 static void distance_fixture(unsigned char *victim) {
  memset(fake_pool,0,sizeof(fake_pool));memset(fake_slots,0,sizeof(fake_slots));
@@ -103,6 +107,12 @@ int main(void) {
  memcpy(fake_capsules[1]+0x10,&fake_capsule_class,sizeof(fake_capsule_class));
  for(unsigned n=0;n<5;n++)CHECK(mock_counts[n]==1);
  FILE *f=fopen("selftest.jsonl","wb");CHECK(f);write_hit(f,&hit);
+ /* Head is enum zero: capture its coefficient and successful read mask. */
+ test_bone=0;call_apply(victim,attack,0);test_bone=1;
+ Hit head;CHECK(dequeue(&head));
+ CHECK(head.bone[0].bone==0 && head.bone[0].multiplier==12 && head.bone[0].reads==3);
+ CHECK(head.bone[0].result==300 && head.armor[0].damage_in==300);
+ fixture(victim,attack,attributes,42);distance_fixture(victim);
  /* Nested calls retain separate events and restore their parent's context. */
  nested=1;CHECK(call_apply(victim,attack,0)==0x12345678u);nested=0;
  Hit child,parent;CHECK(dequeue(&child));CHECK(dequeue(&parent));

@@ -1,4 +1,4 @@
-# DamageTrace 0.2.0 â€” experimental damage-validation ASI
+# DamageTrace 0.2.1 â€” experimental damage-validation ASI
 
 This diagnostic records actual native hit stages and HP changes. It does not
 change damage values or draw additional random numbers. It has passed native
@@ -164,10 +164,17 @@ optional `-Python` parameter selects the Python executable. Downloaded Zig is
 verified against its pinned SHA256 before extraction.
 
 GitHub Actions runs the same build on push, pull requests and manual dispatch.
-Download **DamageTrace-v0.2.0-Windows-x64** from a successful run. It contains
-`DamageTrace_v0.2.0.zip` and a checksum/test manifest. The mod ZIP itself contains
+Download **DamageTrace-v0.2.1-Windows-x64** from a successful run. It contains
+`DamageTrace_v0.2.1.zip` and a checksum/test manifest. The mod ZIP itself contains
 only the ASI and INI. The workflow does not publish releases or install the mod.
 
 The code is MIT licensed; vendored MinHook/HDE retain their original notices.
 No game executable, game assets, captured gameplay logs or private compiler
 installation is included or required for CI.
+
+### 0.2.1
+
+Fix Head (bone enum 0) coefficient telemetry. The native regression test checks
+that a headshot records multiplier 12, both successful read bits, and unchanged
+bone-stage/armor input damage. This fixes logging only; protection routing fields
+are not yet captured.

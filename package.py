@@ -15,11 +15,11 @@ guard=(R/'build/DamageTrace.log').read_text()
 assert 'UNSUPPORTED:' in guard and 'ACTIVE:' not in guard
 analysis=json.loads((R/'build/selftest_analysis/summary.json').read_text())
 assert analysis['armor_checks']=={'match':5} and analysis['observed_kills']==1
-archive=out/'DamageTrace_v0.2.0.zip'
+archive=out/'DamageTrace_v0.2.1.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
     z.write(asi,'DamageTrace.asi');z.write(R/'DamageTrace.ini','DamageTrace.ini')
 with zipfile.ZipFile(archive) as z:
     assert z.namelist()==['DamageTrace.asi','DamageTrace.ini'] and z.testzip() is None
-manifest=dict(version='0.2.0',asi_sha256=hashlib.sha256(asi.read_bytes()).hexdigest(),zip_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),supported_exe_sha256=json.loads((R/'profile.json').read_text())['exe_sha256'],zip_entries=['DamageTrace.asi','DamageTrace.ini'],imports=imports,exports=exports,tests='passed')
+manifest=dict(version='0.2.1',asi_sha256=hashlib.sha256(asi.read_bytes()).hexdigest(),zip_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),supported_exe_sha256=json.loads((R/'profile.json').read_text())['exe_sha256'],zip_entries=['DamageTrace.asi','DamageTrace.ini'],imports=imports,exports=exports,tests='passed')
 (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 print(json.dumps(manifest,indent=2))

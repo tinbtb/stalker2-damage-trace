@@ -204,7 +204,7 @@ static float hook_bone(void *victim,void *attack,uint8_t *bone) {
   unsigned n=c->hit.bone_count++;
   if(n<STAGES){BoneStage *s=&c->hit.bone[n];s->result=result;unsigned char b=0;
    if(read_memory((uintptr_t)bone,&b,1)){s->bone=b;s->reads|=1;
-    if(b && b<32 && c->hit.attributes)s->multiplier=read_float(c->hit.attributes+0x3e0+b*4,&s->reads,2);
+    if(b<32 && c->hit.attributes)s->multiplier=read_float(c->hit.attributes+0x3e0+b*4,&s->reads,2);
    }
   }else c->hit.overflow++;
  }
@@ -314,7 +314,7 @@ static DWORD WINAPI worker(void *unused) {
  (void)unused;wchar_t directory[32768];DWORD n=GetModuleFileNameW(self_module,directory,32768);
  if(!n || n>32000)return 0;wchar_t *slash=wcsrchr(directory,L'\\');if(!slash)return 0;slash[1]=0;
  swprintf(ini_path,32768,L"%lsDamageTrace.ini",directory);swprintf(status_path,32768,L"%lsDamageTrace.log",directory);
- status("STARTING DamageTrace 0.2.0");
+ status("STARTING DamageTrace 0.2.1");
  char actual[65];if(!exe_hash(actual) || strcmp(actual,EXPECTED_EXE_SHA256)){status("UNSUPPORTED: executable SHA256 does not match audited Steam v2.1.0; no hooks installed");return 0;}
  base_address=(uintptr_t)GetModuleHandleW(NULL);seed_address=base_address+0xa291e1c;
  parameter_addresses[0]=base_address+0x9ede3dc;parameter_addresses[1]=base_address+0x9ede3e0;
@@ -332,7 +332,7 @@ static DWORD WINAPI worker(void *unused) {
  trace_file=_wfopen(trace_path,L"wb");if(!trace_file){status("ERROR: cannot open JSONL output");return 0;}
  setvbuf(trace_file,NULL,_IOFBF,65536);wake_event=CreateEventW(NULL,FALSE,FALSE,NULL);
  LARGE_INTEGER frequency;QueryPerformanceFrequency(&frequency);
- fprintf(trace_file,"{\"event\":\"session\",\"schema\":2,\"version\":\"0.2.0\",\"exe_sha256\":\"%s\",\"qpc_frequency\":%lld,\"pid\":%lu,\"capacity\":%u}\n",actual,frequency.QuadPart,GetCurrentProcessId(),CAPACITY);fflush(trace_file);
+ fprintf(trace_file,"{\"event\":\"session\",\"schema\":2,\"version\":\"0.2.1\",\"exe_sha256\":\"%s\",\"qpc_frequency\":%lld,\"pid\":%lu,\"capacity\":%u}\n",actual,frequency.QuadPart,GetCurrentProcessId(),CAPACITY);fflush(trace_file);
  settings();
  if(!install_hooks()){status("ERROR: hook installation failed");fclose(trace_file);trace_file=NULL;return 0;}
  status("ACTIVE: five damage hooks installed; JSONL writer ready; capture=%ld",capture);
