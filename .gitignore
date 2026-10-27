@@ -1,0 +1,13 @@
+/build/
+/dist/
+/.tools/
+__pycache__/
+*.pyc
+*.asi
+*.exe
+*.dll
+*.pak
+*.ucas
+*.utoc
+*.jsonl
+*.log

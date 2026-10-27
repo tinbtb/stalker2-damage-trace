@@ -1,0 +1,35 @@
+{
+  "exe_sha256": "2bd3f115b959a8eee7e5c4b42b0142dd0025bd437e1014f92dfc60b9afee5479",
+  "functions": [
+    {
+      "name": "APPLY",
+      "rva": "0xc4c814",
+      "size": 9747,
+      "sha256": "98d178acb9739b011d10782dac7386c80f8fdb0b233b58cc0facb17ff4b64403"
+    },
+    {
+      "name": "ARMOR",
+      "rva": "0xc4f34e",
+      "size": 174,
+      "sha256": "e6a63d5e90b177a09a117161f6f3fc76059c7b24f91e5ebca8c2e250fb70f8de"
+    },
+    {
+      "name": "ROLL",
+      "rva": "0xc4f3fc",
+      "size": 98,
+      "sha256": "e96df0e2e35c384bd33a15f34cda03d8e087876f29764aaf437be2fb736e7a54"
+    },
+    {
+      "name": "BONE",
+      "rva": "0xc4fe59",
+      "size": 680,
+      "sha256": "1fb39bb48db0427f0696876a328711050adbbe7b5bd207d93cd743a28be2dda3"
+    },
+    {
+      "name": "HEALTH",
+      "rva": "0x53765e",
+      "size": 278,
+      "sha256": "2baed9454c5cde3ba0be424eb736337e067b49be8ae4e7a32707609eb5f719ec"
+    }
+  ]
+}

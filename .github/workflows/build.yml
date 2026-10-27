@@ -1,0 +1,27 @@
+name: Build and test DamageTrace
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install Python build dependency
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check -r requirements-build.txt
+      - name: Download and verify Zig 0.15.2
+        shell: pwsh
+        run: ./scripts/get-zig.ps1
+      - name: Build, run native and analyzer tests, and package
+        shell: pwsh
+        run: ./build.ps1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: DamageTrace-v0.2.0-Windows-x64
+          path: dist/*
+          if-no-files-found: error
